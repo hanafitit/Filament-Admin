@@ -3,6 +3,8 @@
 .env
 .env.backup
 .env.production
+.env.local
+.env.*.local
 .phpactor.json
 .phpunit.result.cache
 /.codex
@@ -25,3 +27,9 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Local deployment and secrets
+PostgreSQLenv
+appsettings.json
+telegram_send_orders_result.json
+cacert.pem
