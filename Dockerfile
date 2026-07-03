@@ -23,11 +23,33 @@ ENV PORT=10000
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     unzip \
+    libcurl4-openssl-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libjpeg62-turbo-dev \
+    libonig-dev \
     libpq-dev \
+    libpng-dev \
     libsqlite3-dev \
+    libxml2-dev \
     libzip-dev \
     sqlite3 \
-    && docker-php-ext-install pdo_pgsql pdo_sqlite zip bcmath pcntl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+        bcmath \
+        curl \
+        dom \
+        gd \
+        intl \
+        mbstring \
+        pcntl \
+        pdo_pgsql \
+        pdo_sqlite \
+        simplexml \
+        xml \
+        xmlreader \
+        xmlwriter \
+        zip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
