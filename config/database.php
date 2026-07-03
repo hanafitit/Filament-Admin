@@ -19,6 +19,8 @@ return [
 
     'default' => env('DB_CONNECTION', env('DB_LOCAL_CONNECTION', 'sqlite')),
 
+    'mode' => env('APP_DB_MODE', 'local'),
+
     'local_connection' => env('DB_LOCAL_CONNECTION', 'sqlite'),
 
     'remote_connection' => env('DB_REMOTE_CONNECTION', 'pgsql_remote'),

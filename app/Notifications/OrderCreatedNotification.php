@@ -47,17 +47,33 @@ class OrderCreatedNotification extends Notification implements ShouldQueue
         $budget = number_format((float) $order->budget, 2, '.', ' ');
         $deadline = $order->deadline?->format('d.m.Y H:i') ?? 'Не указан';
 
-        return TelegramMessage::create()
+        $message = TelegramMessage::create()
             ->token(config('services.telegram.bot_token'))
             ->content(
-                "🔔 *Новый заказ в системе!*\n\n".
-                "📦 *Заказ:* {$title}\n".
-                "🔗 *Источник:* {$source}\n".
-                "🚦 *Статус:* {$status}\n".
-                "👤 *Исполнитель:* {$executor}\n".
-                "💰 *Бюджет:* {$budget} ₽\n".
-                "📅 *Дедлайн:* {$deadline}"
-            )
-            ->button('Открыть в системе', $url);
+                "Новый заказ в системе!\n\n".
+                "Заказ: {$title}\n".
+                "Источник: {$source}\n".
+                "Статус: {$status}\n".
+                "Исполнитель: {$executor}\n".
+                "Бюджет: {$budget} ₽\n".
+                "Дедлайн: {$deadline}"
+            );
+
+        if ($this->canUseTelegramButtonUrl($url)) {
+            $message->button('Открыть в системе', $url);
+        }
+
+        return $message;
+    }
+
+    protected function canUseTelegramButtonUrl(string $url): bool
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (! is_string($host) || $host === '') {
+            return false;
+        }
+
+        return ! in_array($host, ['localhost', '127.0.0.1', '::1'], true);
     }
 }

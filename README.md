@@ -1,58 +1,61 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Freelance CRM
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Режимы БД
 
-## About Laravel
+Проект поддерживает три режима, которые переключаются через `.env` до запуска приложения:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```env
+APP_DB_MODE=local
+DB_LOCAL_CONNECTION=sqlite
+DB_REMOTE_CONNECTION=pgsql_remote
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+- `local`:
+  приложение полностью работает на локальной БД.
+- `remote`:
+  приложение полностью работает на серверной БД.
+- `hybrid`:
+  приложение работает на локальной БД, а синхронизация в серверную уходит каждые 5 минут.
 
-## Contributing
+Во всех режимах выбор активной БД делается автоматически через `App\Support\Database\DatabaseModeManager`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Первичная копия локальной БД в серверную
 
-## Code of Conduct
+Перед началом работы в `hybrid` режиме сначала скопируйте локальную БД в серверную:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan app:sync-remote-database --force
+```
 
-## Security Vulnerabilities
+Команда:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- делает `upsert` по основным таблицам приложения;
+- удаляет на серверной БД записи, которых больше нет в локальной;
+- выравнивает PostgreSQL sequence после копирования.
 
-## License
+Если нужно только долить данные без удаления лишних строк на сервере:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan app:sync-remote-database --force --keep-extra
+```
+
+## Render
+
+Для Render добавлен [render.yaml](/C:/Users/Байсангур/Новая%20папка/render.yaml), рассчитанный на гибридный режим:
+
+- локальная SQLite хранится на persistent disk в `/var/data/database.sqlite`;
+- web-сервис поднимает Laravel, `queue:work` и `schedule:work` в одном контейнере;
+- расписание Laravel запускает синхронизацию серверной БД каждые 5 минут.
+
+Минимальные переменные, которые нужно заполнить на Render:
+
+- `APP_KEY`
+- `APP_URL`
+- `REMOTE_DB_HOST`
+- `REMOTE_DB_PORT`
+- `REMOTE_DB_DATABASE`
+- `REMOTE_DB_USERNAME`
+- `REMOTE_DB_PASSWORD`
+- `REMOTE_DB_SSLMODE`
+
+Если нужен строгий интервал синхронизации без пауз, лучше не использовать sleeping/free-окружение, потому что при сне web-сервиса фоновые процессы тоже останавливаются.

@@ -46,16 +46,32 @@ class PaymentDeadlineReminderNotification extends Notification implements Should
         $budget = number_format((float) $order->budget, 2, '.', ' ');
         $paymentDeadline = $order->payment_deadline?->format('d.m.Y H:i') ?? 'Не указан';
 
-        return TelegramMessage::create()
+        $message = TelegramMessage::create()
             ->token(config('services.telegram.bot_token'))
             ->content(
-                "⏰ *Ожидается оплата по заказу*\n\n".
-                "📦 *Заказ:* {$title}\n".
-                "🔗 *Источник:* {$source}\n".
-                "👤 *Исполнитель:* {$executor}\n".
-                "💰 *К поступлению:* {$budget} ₽\n".
-                "📅 *Дедлайн оплаты:* {$paymentDeadline}"
-            )
-            ->button('Открыть в системе', $url);
+                "Ожидается оплата по заказу\n\n".
+                "Заказ: {$title}\n".
+                "Источник: {$source}\n".
+                "Исполнитель: {$executor}\n".
+                "К поступлению: {$budget} ₽\n".
+                "Дедлайн оплаты: {$paymentDeadline}"
+            );
+
+        if ($this->canUseTelegramButtonUrl($url)) {
+            $message->button('Открыть в системе', $url);
+        }
+
+        return $message;
+    }
+
+    protected function canUseTelegramButtonUrl(string $url): bool
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+
+        if (! is_string($host) || $host === '') {
+            return false;
+        }
+
+        return ! in_array($host, ['localhost', '127.0.0.1', '::1'], true);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Order;
 use App\Observers\OrderObserver;
+use App\Support\Database\DatabaseModeManager;
 use App\Support\Diagnostics\RequestDiagnostics;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(RequestDiagnostics::class, fn () => new RequestDiagnostics);
+        $this->app->singleton(DatabaseModeManager::class);
     }
 
     /**
@@ -24,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        app(DatabaseModeManager::class)->apply();
+
         Order::observe(OrderObserver::class);
 
         if (config('logging.diagnostics.enabled')) {

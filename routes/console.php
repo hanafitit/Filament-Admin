@@ -20,3 +20,8 @@ Schedule::command('backup:run')
 Schedule::command('backup:clean')
     ->dailyAt('04:00')
     ->timezone(config('app.timezone'));
+
+Schedule::command('app:sync-remote-database')
+    ->everyFiveMinutes()
+    ->withoutOverlapping()
+    ->timezone(config('app.timezone'));

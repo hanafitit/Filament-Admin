@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: freelance-crm
+    runtime: php
+    plan: free
+    disk:
+      name: app-data
+      mountPath: /var/data
+      sizeGB: 1
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan config:clear
+      php artisan route:clear
+      php artisan view:clear
+      npm ci
+      npm run build
+    startCommand: sh -c "mkdir -p /var/data storage/logs && touch /var/data/database.sqlite && php artisan migrate --force && (php artisan queue:work --tries=1 --timeout=0 >> storage/logs/queue.log 2>&1 &) && (php artisan schedule:work >> storage/logs/scheduler.log 2>&1 &) && php artisan serve --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_DB_MODE
+        value: hybrid
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_LOCAL_CONNECTION
+        value: sqlite
+      - key: DB_REMOTE_CONNECTION
+        value: pgsql_remote
+      - key: SQLITE_DB_DATABASE
+        value: /var/data/database.sqlite
