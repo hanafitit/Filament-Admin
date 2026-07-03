@@ -47,7 +47,13 @@ RUN composer install --no-dev --prefer-dist --optimize-autoloader --no-interacti
 COPY . .
 COPY --from=assets /app/public/build ./public/build
 
-RUN mkdir -p storage/logs bootstrap/cache \
+RUN mkdir -p \
+        storage/logs \
+        storage/framework/cache/data \
+        storage/framework/sessions \
+        storage/framework/testing \
+        storage/framework/views \
+        bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && composer dump-autoload --optimize --no-dev --no-interaction \
     && php artisan package:discover --ansi
