@@ -23,34 +23,21 @@ ENV PORT=10000
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     unzip \
-    libcurl4-openssl-dev \
-    libfreetype6-dev \
-    libicu-dev \
-    libjpeg62-turbo-dev \
-    libonig-dev \
-    libpq-dev \
-    libpng-dev \
-    libsqlite3-dev \
-    libxml2-dev \
-    libzip-dev \
     sqlite3 \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install \
+    && rm -rf /var/lib/apt/lists/*
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && install-php-extensions \
         bcmath \
         curl \
-        dom \
         gd \
         intl \
         mbstring \
         pcntl \
         pdo_pgsql \
         pdo_sqlite \
-        simplexml \
-        xml \
-        xmlreader \
-        xmlwriter \
-        zip \
-    && rm -rf /var/lib/apt/lists/*
+        zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
