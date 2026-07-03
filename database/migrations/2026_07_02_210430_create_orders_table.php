@@ -14,6 +14,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $driver = Schema::getConnection()->getDriverName();
+
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('title');
@@ -32,6 +34,10 @@ return new class extends Migration
             $table->dateTime('payment_deadline')->nullable();
             $table->timestamps();
         });
+
+        if ($driver === 'sqlite') {
+            return;
+        }
 
         DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_budget_non_negative CHECK (budget >= 0)');
         DB::statement('ALTER TABLE orders ADD CONSTRAINT orders_commission_non_negative CHECK (commission >= 0)');
