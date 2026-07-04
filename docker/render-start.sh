@@ -16,6 +16,15 @@ php artisan route:clear
 php artisan view:clear
 php artisan migrate --force
 
+if [ -n "${ADMIN_EMAIL:-}" ] && [ -n "${ADMIN_PASSWORD:-}" ]; then
+    php artisan app:create-admin \
+        --name="${ADMIN_NAME:-Admin}" \
+        --email="$ADMIN_EMAIL" \
+        --password="$ADMIN_PASSWORD" \
+        --reset-password \
+        --no-interaction
+fi
+
 php artisan queue:work --tries=1 --timeout=0 >> /app/storage/logs/queue.log 2>&1 &
 php artisan schedule:work >> /app/storage/logs/scheduler.log 2>&1 &
 
