@@ -29,7 +29,7 @@ services:
       - key: APP_URL
         value: https://filament-admin-acee.onrender.com
       - key: APP_DB_MODE
-        value: hybrid
+        value: remote
       - key: DB_CONNECTION
         value: sqlite
       - key: DB_LOCAL_CONNECTION

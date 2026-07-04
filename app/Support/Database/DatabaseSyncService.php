@@ -128,7 +128,7 @@ class DatabaseSyncService
         }
 
         foreach (array_chunk($toDelete, 200) as $chunk) {
-            DB::connection($target)->transaction(function () use ($tableName, $keys, $chunk, $targetKeys): void {
+            DB::connection($target)->transaction(function () use ($target, $tableName, $keys, $chunk, $targetKeys): void {
                 foreach ($chunk as $signature) {
                     $query = DB::connection($target)->table($tableName);
 

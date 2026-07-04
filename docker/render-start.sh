@@ -6,6 +6,10 @@ SQLITE_PATH="${SQLITE_DB_DATABASE:-/var/data/database.sqlite}"
 
 mkdir -p /app/storage/logs
 
+if [ -z "${APP_DB_MODE:-}" ] && [ -n "${REMOTE_DB_HOST:-}" ]; then
+    export APP_DB_MODE=remote
+fi
+
 if [ -n "$SQLITE_PATH" ]; then
     mkdir -p "$(dirname "$SQLITE_PATH")"
     touch "$SQLITE_PATH"
