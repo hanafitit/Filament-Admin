@@ -22,7 +22,7 @@
             x-model="theme"
             class="fi-theme-panel-select w-full appearance-none rounded-2xl border border-gray-200 bg-white px-4 py-3 pr-11 text-sm font-medium text-gray-700 shadow-sm outline-none transition focus:border-amber-400 focus:ring-2 focus:ring-amber-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-100 dark:focus:border-amber-300 dark:focus:ring-amber-400/20"
         >
-            <option value="dark">Текущий</option>
+            <option value="dark">Тёмный</option>
             <option value="light">Светлый</option>
             <option value="system">Системный</option>
         </select>

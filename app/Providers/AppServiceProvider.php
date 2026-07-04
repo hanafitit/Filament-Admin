@@ -8,6 +8,7 @@ use App\Support\Database\DatabaseModeManager;
 use App\Support\Diagnostics\RequestDiagnostics;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         app(DatabaseModeManager::class)->apply();
+
+        if ($this->app->isProduction()) {
+            URL::forceScheme('https');
+        }
 
         Order::observe(OrderObserver::class);
 
