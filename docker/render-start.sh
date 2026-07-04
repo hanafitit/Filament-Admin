@@ -6,10 +6,6 @@ SQLITE_PATH="${SQLITE_DB_DATABASE:-/var/data/database.sqlite}"
 
 mkdir -p /app/storage/logs
 
-if [ -z "${APP_DB_MODE:-}" ] && [ -n "${REMOTE_DB_HOST:-}" ]; then
-    export APP_DB_MODE=remote
-fi
-
 if [ -n "$SQLITE_PATH" ]; then
     mkdir -p "$(dirname "$SQLITE_PATH")"
     touch "$SQLITE_PATH"
@@ -19,6 +15,10 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 php artisan migrate --force
+
+if [ -n "${REMOTE_DB_HOST:-}" ] && [ -n "${REMOTE_DB_DATABASE:-}" ] && [ -n "${REMOTE_DB_USERNAME:-}" ]; then
+    php artisan app:pull-remote-database
+fi
 
 if [ -n "${ADMIN_EMAIL:-}" ] && [ -n "${ADMIN_PASSWORD:-}" ]; then
     php artisan app:create-admin \

@@ -11,32 +11,20 @@ class DatabaseSyncService
 {
     public function syncLocalToRemote(bool $deleteMissing = true): array
     {
-        $source = (string) config('database.local_connection');
-        $target = (string) config('database.remote_connection');
+        return $this->sync(
+            (string) config('database.local_connection'),
+            (string) config('database.remote_connection'),
+            $deleteMissing,
+        );
+    }
 
-        if ($source === $target) {
-            throw new RuntimeException('Local and remote database connections must be different.');
-        }
-
-        $tables = $this->tables();
-        $summary = [];
-
-        foreach ($tables as $table) {
-            $summary[$table['name']] = $this->upsertTable($source, $target, $table);
-        }
-
-        if ($deleteMissing) {
-            foreach (array_reverse($tables) as $table) {
-                $deleted = $this->deleteMissingRows($source, $target, $table);
-                $summary[$table['name']]['deleted'] = $deleted;
-            }
-        }
-
-        foreach ($tables as $table) {
-            $this->syncSequenceIfNeeded($target, $table);
-        }
-
-        return $summary;
+    public function syncRemoteToLocal(bool $deleteMissing = true): array
+    {
+        return $this->sync(
+            (string) config('database.remote_connection'),
+            (string) config('database.local_connection'),
+            $deleteMissing,
+        );
     }
 
     /**
@@ -210,5 +198,32 @@ class DatabaseSyncService
         $connection->statement(
             "SELECT setval(pg_get_serial_sequence('{$tableName}', 'id'), COALESCE(MAX(id), 1), MAX(id) IS NOT NULL) FROM {$wrappedTable}"
         );
+    }
+
+    protected function sync(string $source, string $target, bool $deleteMissing): array
+    {
+        if ($source === $target) {
+            throw new RuntimeException('Local and remote database connections must be different.');
+        }
+
+        $tables = $this->tables();
+        $summary = [];
+
+        foreach ($tables as $table) {
+            $summary[$table['name']] = $this->upsertTable($source, $target, $table);
+        }
+
+        if ($deleteMissing) {
+            foreach (array_reverse($tables) as $table) {
+                $deleted = $this->deleteMissingRows($source, $target, $table);
+                $summary[$table['name']]['deleted'] = $deleted;
+            }
+        }
+
+        foreach ($tables as $table) {
+            $this->syncSequenceIfNeeded($target, $table);
+        }
+
+        return $summary;
     }
 }
