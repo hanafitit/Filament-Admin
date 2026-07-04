@@ -2,6 +2,16 @@
     <form wire:submit="applyFilters" class="space-y-6">
         {{ $this->form }}
 
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-100">
+            Скачать подробный отчет в Excel можно во вкладке
+            <a
+                href="{{ $this->getOrdersPageUrl() }}"
+                class="font-semibold underline underline-offset-2 transition hover:text-amber-700 dark:hover:text-amber-200"
+            >
+                "Заказы"
+            </a>.
+        </div>
+
         <div class="flex justify-end">
             <x-filament::button type="submit" icon="heroicon-o-funnel">
                 Применить фильтр

@@ -6,10 +6,11 @@ use App\Models\Order;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class OrdersExport implements FromQuery, WithHeadings, WithMapping
+class OrdersExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping
 {
     public function __construct(
         protected ?string $startDate,
