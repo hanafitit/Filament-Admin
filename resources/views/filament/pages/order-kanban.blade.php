@@ -4,10 +4,28 @@
             draggingOrderId: null,
             pendingOrderId: null,
             pendingStatusId: null,
+            dragSourceElement: null,
             autoScrollFrame: null,
             autoScrollDirection: 0,
             autoScrollSpeed: 15,
             autoScrollSensitivity: 60,
+            hideDragSource(orderId) {
+                requestAnimationFrame(() => {
+                    if (this.draggingOrderId !== orderId || ! this.dragSourceElement) {
+                        return;
+                    }
+
+                    this.dragSourceElement.classList.add('opacity-0');
+                });
+            },
+            restoreDragSource() {
+                if (! this.dragSourceElement) {
+                    return;
+                }
+
+                this.dragSourceElement.classList.remove('opacity-0');
+                this.dragSourceElement = null;
+            },
             startAutoScroll(direction) {
                 this.autoScrollDirection = direction;
 
@@ -92,10 +110,13 @@
                                 draggingOrderId = null;
                                 pendingOrderId = null;
                                 pendingStatusId = null;
+                                restoreDragSource();
                             })
                             .catch(() => {
                                 pendingOrderId = null;
                                 pendingStatusId = null;
+                                draggingOrderId = null;
+                                restoreDragSource();
                             });
                     "
                 >
@@ -119,11 +140,12 @@
                                 wire:key="kanban-order-{{ $order['id'] }}"
                                 class="min-w-0 cursor-move rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm transition hover:border-primary-300 hover:shadow-md dark:border-white/10 dark:bg-white/5"
                                 draggable="true"
-                                x-bind:class="(draggingOrderId === {{ $order['id'] }} || pendingOrderId === {{ $order['id'] }}) ? 'pointer-events-none opacity-0' : ''"
                                 x-on:dragstart="
                                     draggingOrderId = {{ $order['id'] }};
+                                    dragSourceElement = event.currentTarget;
                                     event.dataTransfer.effectAllowed = 'move';
                                     event.dataTransfer.setData('text/plain', '{{ $order['id'] }}');
+                                    hideDragSource({{ $order['id'] }});
                                 "
                                 x-on:dragend="
                                     draggingOrderId = null;
@@ -131,6 +153,7 @@
 
                                     if (pendingOrderId !== {{ $order['id'] }}) {
                                         pendingStatusId = null;
+                                        restoreDragSource();
                                     }
                                 "
                             >
