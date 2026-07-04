@@ -17,6 +17,7 @@ class Source extends Model
         return match ($normalized) {
             'fl.ru', 'fl ru', 'fl' => 'fl',
             'kwork' => 'kwork',
+            'прямой клиент', 'прямой-клиент', 'direct', 'direct client' => 'direct',
             default => Str::slug($normalized),
         };
     }

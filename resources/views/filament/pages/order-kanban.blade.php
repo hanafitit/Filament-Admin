@@ -4,11 +4,60 @@
             draggingOrderId: null,
             pendingOrderId: null,
             pendingStatusId: null,
+            hoverStatusId: null,
             dragSourceElement: null,
+            dragPlaceholderHeight: null,
+            cardPositions: {},
             autoScrollFrame: null,
             autoScrollDirection: 0,
             autoScrollSpeed: 15,
             autoScrollSensitivity: 60,
+            captureCardPositions() {
+                this.cardPositions = Array.from(this.$refs.board.querySelectorAll('[data-kanban-card]'))
+                    .reduce((positions, element) => {
+                        positions[element.dataset.orderId] = element.getBoundingClientRect();
+
+                        return positions;
+                    }, {});
+            },
+            animateCardReflow() {
+                const previousPositions = this.cardPositions;
+
+                if (! Object.keys(previousPositions).length) {
+                    return;
+                }
+
+                requestAnimationFrame(() => {
+                    this.$refs.board.querySelectorAll('[data-kanban-card]').forEach((element) => {
+                        const previousRect = previousPositions[element.dataset.orderId];
+
+                        if (! previousRect) {
+                            return;
+                        }
+
+                        const nextRect = element.getBoundingClientRect();
+                        const deltaX = previousRect.left - nextRect.left;
+                        const deltaY = previousRect.top - nextRect.top;
+
+                        if (deltaX === 0 && deltaY === 0) {
+                            return;
+                        }
+
+                        element.animate(
+                            [
+                                { transform: `translate(${deltaX}px, ${deltaY}px)` },
+                                { transform: 'translate(0, 0)' },
+                            ],
+                            {
+                                duration: 220,
+                                easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+                            },
+                        );
+                    });
+
+                    this.cardPositions = {};
+                });
+            },
             hideDragSource(orderId) {
                 requestAnimationFrame(() => {
                     if (this.draggingOrderId !== orderId || ! this.dragSourceElement) {
@@ -25,6 +74,8 @@
 
                 this.dragSourceElement.classList.remove('opacity-0');
                 this.dragSourceElement = null;
+                this.dragPlaceholderHeight = null;
+                this.hoverStatusId = null;
             },
             startAutoScroll(direction) {
                 this.autoScrollDirection = direction;
@@ -93,6 +144,7 @@
                     wire:key="kanban-column-{{ $column['id'] }}"
                     class="w-[16rem] shrink-0 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:w-auto md:min-w-0 md:p-3"
                     x-bind:class="pendingStatusId === {{ $column['id'] }} ? 'ring-2 ring-primary-300 dark:ring-primary-500/60' : ''"
+                    x-on:dragenter.prevent="if (draggingOrderId) hoverStatusId = {{ $column['id'] }}"
                     x-on:dragover.prevent
                     x-on:drop.prevent="
                         const orderId = Number(event.dataTransfer.getData('text/plain'));
@@ -101,8 +153,10 @@
                             return;
                         }
 
+                        captureCardPositions();
                         pendingOrderId = orderId;
                         pendingStatusId = {{ $column['id'] }};
+                        hoverStatusId = null;
                         stopAutoScroll();
 
                         $wire.moveOrder(orderId, {{ $column['id'] }})
@@ -110,15 +164,18 @@
                                 draggingOrderId = null;
                                 pendingOrderId = null;
                                 pendingStatusId = null;
+                                animateCardReflow();
                                 restoreDragSource();
                             })
                             .catch(() => {
                                 pendingOrderId = null;
                                 pendingStatusId = null;
                                 draggingOrderId = null;
+                                cardPositions = {};
                                 restoreDragSource();
                             });
                     "
+                    x-on:dragleave="if (! $el.contains($event.relatedTarget) && hoverStatusId === {{ $column['id'] }}) hoverStatusId = null"
                 >
                     <div class="mb-3 flex items-center justify-between gap-2">
                         <div class="min-w-0 space-y-1">
@@ -138,17 +195,23 @@
                         @forelse ($column['orders'] as $order)
                             <article
                                 wire:key="kanban-order-{{ $order['id'] }}"
-                                class="min-w-0 cursor-move rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm transition hover:border-primary-300 hover:shadow-md dark:border-white/10 dark:bg-white/5"
+                                class="min-h-[7.5rem] min-w-0 cursor-move rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm transition hover:border-primary-300 hover:shadow-md dark:border-white/10 dark:bg-white/5"
+                                data-kanban-card
+                                data-order-id="{{ $order['id'] }}"
                                 draggable="true"
                                 x-on:dragstart="
                                     draggingOrderId = {{ $order['id'] }};
                                     dragSourceElement = event.currentTarget;
+                                    dragPlaceholderHeight = `${event.currentTarget.offsetHeight}px`;
+                                    hoverStatusId = {{ $column['id'] }};
                                     event.dataTransfer.effectAllowed = 'move';
                                     event.dataTransfer.setData('text/plain', '{{ $order['id'] }}');
                                     hideDragSource({{ $order['id'] }});
                                 "
                                 x-on:dragend="
                                     draggingOrderId = null;
+                                    hoverStatusId = null;
+                                    dragPlaceholderHeight = null;
                                     stopAutoScroll();
 
                                     if (pendingOrderId !== {{ $order['id'] }}) {
@@ -157,9 +220,9 @@
                                     }
                                 "
                             >
-                                <div class="space-y-1.5">
+                                <div class="flex h-full flex-col justify-between gap-2">
                                     <div class="flex items-start justify-between gap-2">
-                                        <h3 lang="ru" class="kanban-text-wrap min-w-0 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
+                                        <h3 lang="ru" class="kanban-title-clamp min-w-0 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
                                             {!! nl2br(e($order['title'])) !!}
                                         </h3>
 
@@ -201,6 +264,13 @@
                                 Перетащите сюда заказ
                             </div>
                         @endforelse
+
+                        <div
+                            x-cloak
+                            x-show="draggingOrderId && hoverStatusId === {{ $column['id'] }}"
+                            class="kanban-drop-placeholder"
+                            x-bind:style="dragPlaceholderHeight ? `height: ${dragPlaceholderHeight};` : ''"
+                        ></div>
                     </div>
                 </section>
             @endforeach

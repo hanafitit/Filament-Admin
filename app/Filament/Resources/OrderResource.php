@@ -10,6 +10,7 @@ use App\Models\Source;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\MarketplaceCommissionCalculator;
+use App\Support\Uploads\OrderAttachmentUpload;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -100,7 +101,7 @@ class OrderResource extends Resource
                             ->prefix('₽')
                             ->readOnly()
                             ->dehydrated()
-                            ->helperText('Рассчитывается автоматически для Kwork и FL.ru')
+                            ->helperText('Рассчитывается автоматически для Kwork и FL')
                             ->label('Комиссия биржи'),
                         Forms\Components\DateTimePicker::make('deadline')
                             ->required()
@@ -124,18 +125,14 @@ class OrderResource extends Resource
                                     ->disk('local')
                                     ->directory('order-attachments')
                                     ->visibility('private')
-                                    ->acceptedFileTypes([
-                                        'application/pdf',
-                                        'application/zip',
-                                        'application/msword',
-                                        'application/vnd.ms-excel',
-                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                        'image/jpeg',
-                                        'image/png',
-                                        'text/plain',
+                                    ->acceptedFileTypes(OrderAttachmentUpload::acceptedFileTypes())
+                                    ->maxSize(OrderAttachmentUpload::effectiveMaxKilobytes())
+                                    ->helperText(OrderAttachmentUpload::helperText())
+                                    ->validationMessages([
+                                        'max' => OrderAttachmentUpload::uploadTooLargeMessage(),
+                                        'mimetypes' => OrderAttachmentUpload::invalidTypeMessage(),
+                                        'mimes' => OrderAttachmentUpload::invalidTypeMessage(),
                                     ])
-                                    ->maxSize(10240)
                                     ->storeFileNamesIn('file_name')
                                     ->downloadable()
                                     ->openable()

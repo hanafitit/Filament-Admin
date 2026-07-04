@@ -34,6 +34,7 @@ class OrderSeeder extends Seeder
             ->value('id') ?: $adminId;
 
         $sources = Source::query()->pluck('id', 'slug');
+        $directSourceId = $sources['direct'] ?? null;
         $statuses = Status::query()->pluck('id', 'name');
 
         foreach ([
@@ -105,7 +106,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Поддержка сайта онлайн-школы',
                 'description' => 'Разобрать список задач от клиента и подготовить план работ.',
-                'source_id' => $sources['repeat'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Новый'] ?? null,
                 'budget' => 30000,
                 'commission' => 0,
@@ -116,7 +117,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Аудит Laravel-проекта',
                 'description' => 'Проверить архитектуру, безопасность и подготовить оценку доработок.',
-                'source_id' => $sources['telegram'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Новый'] ?? null,
                 'budget' => 25000,
                 'commission' => 0,
@@ -149,7 +150,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Сайт для ивент-агентства',
                 'description' => 'Проект сдан, ждем оплату по закрывающим документам.',
-                'source_id' => $sources['repeat'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Сдан'] ?? null,
                 'budget' => 70000,
                 'commission' => 0,
@@ -171,7 +172,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Баннеры для маркетплейса',
                 'description' => 'Заказ отменен клиентом до старта разработки.',
-                'source_id' => $sources['telegram'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Сдан'] ?? null,
                 'budget' => 20000,
                 'commission' => 0,
@@ -193,7 +194,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Техническая поддержка WordPress',
                 'description' => 'Закрытый пакет поддержки и исправлений за месяц.',
-                'source_id' => $sources['repeat'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Оплачен'] ?? null,
                 'budget' => 35000,
                 'commission' => 0,
@@ -204,7 +205,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Настройка рекламы для студии',
                 'description' => 'Работы приняты, оплата ожидается сегодня вечером.',
-                'source_id' => $sources['telegram'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Сдан'] ?? null,
                 'budget' => 40000,
                 'commission' => 0,
@@ -237,7 +238,7 @@ class OrderSeeder extends Seeder
             [
                 'title' => 'Миграция CRM на PostgreSQL',
                 'description' => 'Перенести данные, проверить индексы и подготовить резервную копию.',
-                'source_id' => $sources['repeat'] ?? null,
+                'source_id' => $directSourceId,
                 'status_id' => $statuses['Сдан'] ?? null,
                 'budget' => 130000,
                 'commission' => 0,

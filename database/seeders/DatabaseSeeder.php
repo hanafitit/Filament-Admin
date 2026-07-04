@@ -24,10 +24,8 @@ class DatabaseSeeder extends Seeder
 
         foreach ([
             ['slug' => 'kwork', 'name' => 'Kwork'],
-            ['slug' => 'fl', 'name' => 'FL.ru'],
+            ['slug' => 'fl', 'name' => 'FL'],
             ['slug' => 'direct', 'name' => 'Прямой клиент'],
-            ['slug' => 'telegram', 'name' => 'Telegram'],
-            ['slug' => 'repeat', 'name' => 'Повторный клиент'],
         ] as $source) {
             Source::updateOrCreate(
                 ['slug' => $source['slug']],
