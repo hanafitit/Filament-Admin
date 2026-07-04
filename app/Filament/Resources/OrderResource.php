@@ -275,6 +275,7 @@ class OrderResource extends Resource
     protected static function getStatusOptions(): array
     {
         return static::$statusOptions ??= Status::query()
+            ->workflow()
             ->orderBy('sort_order')
             ->pluck('name', 'id')
             ->all();

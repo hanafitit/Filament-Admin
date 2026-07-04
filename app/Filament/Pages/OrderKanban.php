@@ -98,6 +98,7 @@ class OrderKanban extends Page
     protected function getStatuses(): Collection
     {
         return $this->statuses ??= Status::query()
+            ->workflow()
             ->orderBy('sort_order')
             ->get();
     }
