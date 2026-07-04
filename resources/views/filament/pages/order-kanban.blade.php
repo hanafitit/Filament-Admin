@@ -265,11 +265,13 @@
                                     }
                                 "
                             >
-                                <div class="flex h-full flex-col gap-2.5">
+                                <div class="flex h-full flex-col gap-2">
                                     <div class="flex items-start justify-between gap-2">
-                                        <h3 lang="ru" class="kanban-text-wrap min-w-0 flex-1 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
-                                            {{ $order['title'] }}
-                                        </h3>
+                                        <div class="min-w-0 flex-1 rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
+                                            <h3 lang="ru" class="kanban-text-wrap text-sm font-semibold leading-snug text-gray-950 dark:text-white">
+                                                {{ $order['title'] }}
+                                            </h3>
+                                        </div>
 
                                         @if ($order['can_delete'])
                                             <button

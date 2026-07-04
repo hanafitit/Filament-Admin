@@ -114,10 +114,12 @@
                                 class="fi-theme-card border border-white/10 p-4"
                             >
                                 <div class="flex items-start justify-between gap-3">
-                                    <div class="space-y-2">
-                                        <h3 class="text-sm font-semibold text-gray-950 dark:text-white">
-                                            {!! nl2br(e($order['title'])) !!}
-                                        </h3>
+                                    <div class="min-w-0 flex-1 space-y-2">
+                                        <div class="rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
+                                            <h3 class="kanban-text-wrap text-sm font-semibold text-gray-950 dark:text-white">
+                                                {{ $order['title'] }}
+                                            </h3>
+                                        </div>
 
                                         <div class="space-y-0.5 text-xs leading-5 text-gray-600 dark:text-gray-300">
                                             @foreach ($order['meta_lines'] as $line)
