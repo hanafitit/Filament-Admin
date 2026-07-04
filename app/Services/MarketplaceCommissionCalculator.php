@@ -36,6 +36,7 @@ class MarketplaceCommissionCalculator
     public static function calculateForSourceSlug(?string $sourceSlug, mixed $budget): ?float
     {
         $budget = static::normalizeBudget($budget);
+        $sourceSlug = filled($sourceSlug) ? mb_strtolower($sourceSlug) : null;
 
         if ($budget === null) {
             return null;
@@ -43,7 +44,7 @@ class MarketplaceCommissionCalculator
 
         $rate = match ($sourceSlug) {
             'kwork' => static::kworkRate($budget),
-            'fl' => static::flRate($budget),
+            'fl', 'fl-ru' => static::flRate($budget),
             default => null,
         };
 

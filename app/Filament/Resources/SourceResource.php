@@ -6,6 +6,8 @@ use App\Filament\Resources\SourceResource\Pages;
 use App\Models\Source;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -33,13 +35,25 @@ class SourceResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Set $set, Get $get, ?string $old, ?string $state): void {
+                        $currentSlug = (string) $get('slug');
+                        $generatedOldSlug = Source::generateSlugFromName($old);
+
+                        if ($currentSlug !== '' && $currentSlug !== $generatedOldSlug) {
+                            return;
+                        }
+
+                        $set('slug', Source::generateSlugFromName($state));
+                    })
                     ->maxLength(255)
                     ->label('Название'),
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true)
-                    ->label('Код'),
+                    ->helperText('Заполняется автоматически. Менять нужно только если нужен особый внутренний код.')
+                    ->label('Системный код'),
             ]);
     }
 
@@ -50,9 +64,6 @@ class SourceResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->label('Название'),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->label('Код'),
             ])
             ->filters([
             ])

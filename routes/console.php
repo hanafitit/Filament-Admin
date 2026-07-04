@@ -22,6 +22,6 @@ Schedule::command('backup:clean')
     ->timezone(config('app.timezone'));
 
 Schedule::command('app:sync-remote-database')
-    ->everyFiveMinutes()
+    ->cron('*/3 * * * *')
     ->withoutOverlapping()
     ->timezone(config('app.timezone'));

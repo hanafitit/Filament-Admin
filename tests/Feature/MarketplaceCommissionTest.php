@@ -54,6 +54,7 @@ class MarketplaceCommissionTest extends TestCase
             'kwork middle tier' => ['kwork', 45000, 5400],
             'kwork high tier' => ['kwork', 400000, 30000],
             'fl low tier' => ['fl', 35000, 7000],
+            'fl.ru alias low tier' => ['fl-ru', 35000, 7000],
             'fl middle tier' => ['fl', 120000, 14400],
             'fl high tier' => ['fl', 400000, 28000],
         ];
