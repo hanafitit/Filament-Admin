@@ -304,11 +304,6 @@
     .fi-theme-delay-3 { animation-delay: 180ms; }
     .fi-theme-delay-4 { animation-delay: 240ms; }
 
-    .kanban-title-clamp {
-        padding-inline-start: 0.25rem;
-        margin-inline-start: -0.25rem;
-    }
-
     @keyframes filamentFadeUp {
         from {
             opacity: 0;

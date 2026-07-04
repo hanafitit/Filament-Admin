@@ -265,10 +265,10 @@
                                     }
                                 "
                             >
-                                <div class="flex h-full flex-col justify-between gap-2">
+                                <div class="flex h-full flex-col gap-2.5">
                                     <div class="flex items-start justify-between gap-2">
-                                        <h3 lang="ru" class="kanban-title-clamp min-w-0 pr-2 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
-                                            {!! nl2br(e($order['title'])) !!}
+                                        <h3 lang="ru" class="kanban-text-wrap min-w-0 flex-1 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
+                                            {{ $order['title'] }}
                                         </h3>
 
                                         @if ($order['can_delete'])

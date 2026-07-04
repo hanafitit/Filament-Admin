@@ -142,21 +142,10 @@ class OrderKanban extends Page
 
         return [
             'id' => $order->id,
-            'title' => $this->wrapTitleAfterSecondWord($order->title),
+            'title' => $order->title,
             'status' => $order->status_id,
             'meta_lines' => $metaLines,
             'can_delete' => $this->canDeleteOrders(),
         ];
-    }
-
-    protected function wrapTitleAfterSecondWord(string $title): string
-    {
-        $words = preg_split('/\s+/u', trim($title), -1, PREG_SPLIT_NO_EMPTY);
-
-        if (! $words || count($words) <= 2) {
-            return $title;
-        }
-
-        return implode(' ', array_slice($words, 0, 2))."\n".implode(' ', array_slice($words, 2));
     }
 }
