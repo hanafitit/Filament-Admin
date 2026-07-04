@@ -1,4 +1,9 @@
 <x-filament-panels::page>
+    @php
+        $totalOrders = collect($this->board)->sum(fn ($column) => count($column['orders']));
+        $activeStatuses = collect($this->board)->filter(fn ($column) => count($column['orders']) > 0)->count();
+    @endphp
+
     <div
         x-data="{
             draggingOrderId: null,
@@ -120,10 +125,50 @@
                 this.stopAutoScroll();
             }
         }"
+        class="space-y-6"
     >
+        <section class="fi-theme-hero">
+            <div class="fi-theme-grid"></div>
+
+            <div class="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div class="max-w-3xl space-y-3">
+                    <span class="fi-theme-pill text-xs font-semibold uppercase tracking-[0.24em]">
+                        Workflow board
+                    </span>
+
+                    <div class="space-y-2">
+                        <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+                            Управление заказами в живом канбане
+                        </h1>
+
+                        <p class="max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+                            Перетаскивайте карточки между статусами, быстро считывайте нагрузку по колонкам и держите весь поток работ под рукой.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    <div class="fi-theme-stat">
+                        <span class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Всего заказов</span>
+                        <span class="text-2xl font-semibold text-gray-950 dark:text-white">{{ $totalOrders }}</span>
+                    </div>
+
+                    <div class="fi-theme-stat">
+                        <span class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Статусов активны</span>
+                        <span class="text-2xl font-semibold text-gray-950 dark:text-white">{{ $activeStatuses }}</span>
+                    </div>
+
+                    <div class="fi-theme-stat">
+                        <span class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Колонок всего</span>
+                        <span class="text-2xl font-semibold text-gray-950 dark:text-white">{{ count($this->board) }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <div
             x-ref="board"
-            class="kanban-scrollbar-hidden flex items-start gap-3 overflow-x-auto pb-3 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible"
+            class="kanban-scrollbar-hidden flex items-start gap-4 overflow-x-auto pb-3 md:grid md:grid-cols-4 md:gap-4 md:overflow-visible"
             x-on:dragover="handleBoardDrag($event)"
             x-on:drop="stopAutoScroll()"
             x-on:dragleave="if (! $el.contains($event.relatedTarget)) stopAutoScroll()"
@@ -142,7 +187,7 @@
 
                 <section
                     wire:key="kanban-column-{{ $column['id'] }}"
-                    class="w-[16rem] shrink-0 rounded-2xl bg-white p-3 shadow-sm ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:w-auto md:min-w-0 md:p-3"
+                    class="fi-theme-surface fi-theme-card fi-theme-delay-{{ ($loop->index % 4) + 1 }} w-[17.5rem] shrink-0 p-3.5 md:w-auto md:min-w-0 md:p-4"
                     x-bind:class="pendingStatusId === {{ $column['id'] }} ? 'ring-2 ring-primary-300 dark:ring-primary-500/60' : ''"
                     x-on:dragenter.prevent="if (draggingOrderId) hoverStatusId = {{ $column['id'] }}"
                     x-on:dragover.prevent
@@ -177,8 +222,12 @@
                     "
                     x-on:dragleave="if (! $el.contains($event.relatedTarget) && hoverStatusId === {{ $column['id'] }}) hoverStatusId = null"
                 >
-                    <div class="mb-3 flex items-center justify-between gap-2">
+                    <div class="mb-4 flex items-center justify-between gap-2">
                         <div class="min-w-0 space-y-1">
+                            <div class="fi-theme-pill mb-2 w-fit px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em]">
+                                Status
+                            </div>
+
                             <h2 lang="ru" class="kanban-text-wrap text-sm font-semibold leading-tight text-gray-950 dark:text-white">
                                 {{ $column['title'] }}
                             </h2>
@@ -188,14 +237,14 @@
                             </p>
                         </div>
 
-                        <span class="{{ $dotClass }} inline-flex h-3 w-3 rounded-full"></span>
+                        <span class="{{ $dotClass }} inline-flex h-3 w-3 rounded-full shadow-[0_0_20px_currentColor]"></span>
                     </div>
 
                     <div class="space-y-2.5">
                         @forelse ($column['orders'] as $order)
                             <article
                                 wire:key="kanban-order-{{ $order['id'] }}"
-                                class="min-h-[7.5rem] min-w-0 cursor-move rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm transition hover:border-primary-300 hover:shadow-md dark:border-white/10 dark:bg-white/5"
+                                class="fi-theme-card min-h-[7.5rem] min-w-0 cursor-move border border-white/10 p-3.5"
                                 data-kanban-card
                                 data-order-id="{{ $order['id'] }}"
                                 draggable="true"
@@ -222,14 +271,14 @@
                             >
                                 <div class="flex h-full flex-col justify-between gap-2">
                                     <div class="flex items-start justify-between gap-2">
-                                        <h3 lang="ru" class="kanban-title-clamp min-w-0 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
+                                        <h3 lang="ru" class="kanban-title-clamp min-w-0 pr-2 text-sm font-semibold leading-snug text-gray-950 dark:text-white">
                                             {!! nl2br(e($order['title'])) !!}
                                         </h3>
 
                                         @if ($order['can_delete'])
                                             <button
                                                 type="button"
-                                                class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                                                class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-gray-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                                                 title="Удалить заказ"
                                                 x-on:click.stop="
                                                     if (! confirm('Удалить этот заказ?')) {
@@ -250,9 +299,9 @@
                                         @endif
                                     </div>
 
-                                    <div class="space-y-0.5 text-xs leading-5 text-gray-600 dark:text-gray-300">
+                                    <div class="space-y-1 text-xs leading-5 text-gray-600 dark:text-gray-300">
                                         @foreach ($order['meta_lines'] as $line)
-                                            <p lang="ru" class="kanban-text-wrap">
+                                            <p lang="ru" class="kanban-text-wrap rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
                                                 {{ $line }}
                                             </p>
                                         @endforeach
@@ -260,7 +309,7 @@
                                 </div>
                             </article>
                         @empty
-                            <div class="rounded-xl border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500 dark:border-white/15 dark:text-gray-400">
+                            <div class="rounded-2xl border border-dashed border-gray-300 bg-white/40 px-4 py-8 text-center text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400">
                                 Перетащите сюда заказ
                             </div>
                         @endforelse

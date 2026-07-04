@@ -1,4 +1,43 @@
 <x-filament-panels::page>
+    @php
+        $totalOrders = collect($this->board)->sum(fn ($column) => count($column['orders']));
+        $filledStatuses = collect($this->board)->filter(fn ($column) => count($column['orders']) > 0)->count();
+    @endphp
+
+    <section class="fi-theme-hero mb-6">
+        <div class="fi-theme-grid"></div>
+
+        <div class="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-3xl space-y-3">
+                <span class="fi-theme-pill text-xs font-semibold uppercase tracking-[0.24em]">
+                    Compact board
+                </span>
+
+                <div class="space-y-2">
+                    <h1 class="text-2xl font-semibold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+                        Быстрый обзор заказов по статусам
+                    </h1>
+
+                    <p class="max-w-2xl text-sm leading-6 text-gray-600 dark:text-gray-300">
+                        Свернутый режим помогает быстро пройтись по очередям, открыть нужный блок и изменить статус без перетаскивания карточек.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid gap-3 sm:grid-cols-2">
+                <div class="fi-theme-stat">
+                    <span class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Всего заказов</span>
+                    <span class="text-2xl font-semibold text-gray-950 dark:text-white">{{ $totalOrders }}</span>
+                </div>
+
+                <div class="fi-theme-stat">
+                    <span class="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">Активных статусов</span>
+                    <span class="text-2xl font-semibold text-gray-950 dark:text-white">{{ $filledStatuses }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="mb-6 flex items-center justify-between gap-3">
         <p class="text-sm text-gray-500 dark:text-gray-400">
             Свернутые списки по статусам для быстрого обзора.
@@ -7,7 +46,7 @@
         @if ($this->canDeleteOrders())
             <button
                 type="button"
-                class="inline-flex items-center justify-center rounded-xl border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10"
+                class="inline-flex items-center justify-center rounded-2xl border border-red-200 px-4 py-2.5 text-sm font-medium text-red-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-red-50 dark:border-red-500/20 dark:text-red-400 dark:hover:bg-red-500/10"
                 x-data="{}"
                 x-on:click="
                     if (! confirm('Очистить все заказы со статусом Сдан?')) {
@@ -37,11 +76,11 @@
 
             <details
                 wire:key="compact-kanban-column-{{ $column['id'] }}"
-                class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                class="fi-theme-surface fi-theme-card fi-theme-delay-{{ ($loop->index % 4) + 1 }} group overflow-hidden"
             >
                 <summary class="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 marker:hidden">
                     <div class="flex items-center gap-3">
-                        <span class="{{ $dotClass }} inline-flex h-3 w-3 rounded-full"></span>
+                        <span class="{{ $dotClass }} inline-flex h-3 w-3 rounded-full shadow-[0_0_18px_currentColor]"></span>
 
                         <div>
                             <h2 class="text-sm font-semibold text-gray-950 dark:text-white">
@@ -67,12 +106,12 @@
                     </svg>
                 </summary>
 
-                <div class="border-t border-gray-100 px-5 py-4 dark:border-white/10">
+                <div class="border-t border-gray-100/80 px-5 py-4 dark:border-white/10">
                     <div class="space-y-3">
                         @forelse ($column['orders'] as $order)
                             <article
                                 wire:key="compact-kanban-order-{{ $order['id'] }}"
-                                class="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5"
+                                class="fi-theme-card border border-white/10 p-4"
                             >
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="space-y-2">
@@ -82,7 +121,7 @@
 
                                         <div class="space-y-0.5 text-xs leading-5 text-gray-600 dark:text-gray-300">
                                             @foreach ($order['meta_lines'] as $line)
-                                                <p class="kanban-text-wrap">
+                                                <p class="kanban-text-wrap rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
                                                     {{ $line }}
                                                 </p>
                                             @endforeach
@@ -92,7 +131,7 @@
                                     <div class="flex items-center gap-2">
                                         <a
                                             href="{{ $order['edit_url'] }}"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-xl text-gray-400 transition hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/10 dark:hover:text-gray-200"
                                             title="Редактировать заказ"
                                         >
                                             <svg viewBox="0 0 20 20" fill="currentColor" class="h-4 w-4">
@@ -103,7 +142,7 @@
                                         @if ($order['can_delete'])
                                             <button
                                                 type="button"
-                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-xl text-gray-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400"
                                                 title="Удалить заказ"
                                                 x-data="{}"
                                                 x-on:click="
@@ -132,7 +171,7 @@
                                     </label>
 
                                     <select
-                                        class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none transition focus:border-amber-400 dark:border-white/10 dark:bg-white/5 dark:text-gray-100"
+                                        class="rounded-xl border border-gray-200 bg-white/85 px-3 py-2 text-sm text-gray-700 outline-none transition focus:border-amber-400 dark:border-white/10 dark:bg-white/5 dark:text-gray-100"
                                         wire:change="moveOrder({{ $order['id'] }}, $event.target.value)"
                                     >
                                         @foreach ($this->statusOptions as $statusId => $statusTitle)
@@ -147,7 +186,7 @@
                                 </div>
                             </article>
                         @empty
-                            <div class="rounded-xl border border-dashed border-gray-300 px-4 py-6 text-center text-sm text-gray-500 dark:border-white/15 dark:text-gray-400">
+                            <div class="rounded-2xl border border-dashed border-gray-300 bg-white/40 px-4 py-6 text-center text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400">
                                 В этом статусе пока пусто
                             </div>
                         @endforelse
