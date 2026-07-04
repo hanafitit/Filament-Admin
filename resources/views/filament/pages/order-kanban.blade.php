@@ -224,13 +224,9 @@
                 >
                     <div class="mb-4 flex items-center justify-between gap-2">
                         <div class="min-w-0 space-y-1">
-                            <div class="fi-theme-pill mb-2 w-fit px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em]">
-                                Status
-                            </div>
-
-                            <h2 lang="ru" class="kanban-text-wrap text-sm font-semibold leading-tight text-gray-950 dark:text-white">
+                            <div lang="ru" class="fi-theme-pill mb-2 w-fit px-3 py-1.5 text-sm font-semibold">
                                 {{ $column['title'] }}
-                            </h2>
+                            </div>
 
                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                 {{ count($column['orders']) }} заказ(ов)
