@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Order;
+use App\Models\Status;
 use App\Notifications\OrderCreatedNotification;
 use App\Notifications\OrderStatusChangedNotification;
 use Illuminate\Notifications\Notification;
@@ -21,7 +22,15 @@ class OrderObserver
             return;
         }
 
-        $this->sendTelegramNotification(new OrderStatusChangedNotification($order->fresh(['status'])));
+        $previousStatusName = Status::query()
+            ->whereKey($order->getOriginal('status_id'))
+            ->value('name');
+
+        $this->sendTelegramNotification(new OrderStatusChangedNotification(
+            $order->fresh(['status']) ?? $order,
+            $previousStatusName,
+            auth()->user()?->name,
+        ));
     }
 
     protected function sendTelegramNotification(Notification $notification): void

@@ -38,13 +38,22 @@ class OrderTelegramNotificationsTest extends TestCase
             'sort_order' => 2,
         ]);
         $order = $this->makeOrder($source, $fromStatus, User::factory()->create());
+        $actor = User::factory()->create(['name' => 'Менеджер Алексей']);
 
         Notification::fake();
 
+        $this->actingAs($actor);
         $order->update(['status_id' => $toStatus->id]);
 
         Notification::assertSentOnDemand(OrderStatusChangedNotification::class, function ($notification, array $channels, object $notifiable): bool {
-            return ($notifiable->routes['telegram'] ?? null) === '100500';
+            $message = $notification->toTelegram($notifiable);
+            $content = $message->getPayloadValue('text');
+
+            return ($notifiable->routes['telegram'] ?? null) === '100500'
+                && is_string($content)
+                && str_contains($content, '🔄 Статус: Новый 🆕 ➡️ В работе ⚙️')
+                && str_contains($content, '👤 Кто изменил: Менеджер Алексей')
+                && str_contains($content, '💰 Бюджет: 1 000 ₽');
         });
     }
 

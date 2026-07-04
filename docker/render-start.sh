@@ -3,6 +3,7 @@ set -eu
 
 APP_PORT="${PORT:-10000}"
 SQLITE_PATH="${SQLITE_DB_DATABASE:-/var/data/database.sqlite}"
+PHP_UPLOAD_ARGS="${PHP_UPLOAD_ARGS:--d upload_max_filesize=64M -d post_max_size=64M -d memory_limit=256M}"
 
 mkdir -p /app/storage/logs
 
@@ -53,4 +54,4 @@ log "Starting scheduler"
 php artisan schedule:work >> /app/storage/logs/scheduler.log 2>&1 &
 
 log "Starting HTTP server on port ${APP_PORT}"
-exec php artisan serve --host=0.0.0.0 --port="$APP_PORT"
+exec php ${PHP_UPLOAD_ARGS} artisan serve --host=0.0.0.0 --port="$APP_PORT"
