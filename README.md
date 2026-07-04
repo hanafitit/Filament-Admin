@@ -1,116 +1,64 @@
 # Freelance CRM 🚀
 
-[![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
-[![Filament](https://img.shields.io/badge/Filament-FFA116?style=for-the-badge&logo=laravel&logoColor=white)](https://filamentphp.com)
+[![Laravel](https://img.shields.io/badge/Laravel-13.8-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![Filament](https://img.shields.io/badge/Filament-v3-FFA116?style=for-the-badge&logo=laravel&logoColor=white)](https://filamentphp.com)
 [![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
-**Freelance CRM** — это мощная и гибкая система для управления заказами, разработанная специально для фрилансеров и небольших команд. Система позволяет автоматизировать учет доходов, контролировать дедлайны и анализировать финансовую эффективность работы на различных площадках.
-
-![Dashboard Preview](https://placehold.co/1200x600/2a2a2a/white?text=Freelance+CRM+Dashboard)
+**Freelance CRM** — это профессиональное решение для фрилансеров и команд, объединяющее управление заказами, финансовую аналитику и автоматизацию в одном компактном интерфейсе. Забудьте о таблицах — контролируйте всё от первого клика до финальной выплаты.
 
 ---
 
-## 🌟 Ключевые возможности
+## 🛠 Ключевые возможности
 
-### 📦 Управление заказами
-![Kanban Board](https://placehold.co/800x400/2a2a2a/white?text=Kanban+Board+View)
-- **Kanban-доска**: Наглядное управление этапами работы над заказами.
-- **Интеграция с биржами**: Поддержка популярных площадок (Kwork, FL.ru и др.).
-- **Автоматический расчет комиссий**: Система сама вычисляет чистую прибыль, учитывая прогрессивные комиссии бирж.
-- **Вложения и комментарии**: Храните все файлы и переписку по заказу в одном месте.
+### 📦 Управление и контроль
+- **Интеллектуальный Kanban**: Ведите заказы по этапам с автоматическим расчетом чистой прибыли (с учетом комиссий Kwork, FL и др.).
+- **Центр коммуникаций**: Все вложения, комментарии и дедлайны привязаны к конкретным задачам.
+- **Умные уведомления**: Интеграция с **Telegram** оповестит о смене статусов и приближающихся сроках.
+- **Безопасность данных**: Гибкое управление доступом (**RBAC/Shield**) и автоматические бэкапы.
 
-### 📊 Аналитика и отчетность
-![Financial Reports](https://placehold.co/800x400/2a2a2a/white?text=Financial+Analytics+Report)
-- **Финансовый отчет**: Детальная статистика по выручке, комиссиям и чистой прибыли.
-- **Фильтрация**: Анализируйте данные за любые периоды, в разрезе менеджеров или источников трафика.
-- **Экспорт данных**: Выгрузка отчетов в форматы Excel (.xlsx) и CSV для дальнейшей обработки.
+### 📊 Аналитика и финансы
+![Financial Reports](https://raw.githubusercontent.com/your-repo/freelance-crm/main/docs/images/fin-report.png)
+*(Замените ссылку на актуальный путь к Снимку экрана 2026-07-04 174737.png)*
 
-### 🤖 Автоматизация и уведомления
-![Telegram Notifications](https://placehold.co/800x400/2a2a2a/white?text=Telegram+Bot+Notifications)
-- **Telegram Bot**: Мгновенные уведомления о новых событиях и изменениях статусов.
-- **Контроль дедлайнов**: Система напомнит о приближающихся сроках сдачи и оплаты.
-
-### 🔐 Безопасность
-![Role Management](https://placehold.co/800x400/2a2a2a/white?text=RBAC+Role+Management)
-- **Ролевая модель (RBAC)**: Гибкая настройка прав доступа для администраторов и менеджеров через Filament Shield.
-- **Резервное копирование**: Автоматическое создание бэкапов базы данных и файлов.
+- **Прозрачная прибыль**: Детальные отчеты по источникам (биржи, прямые клиенты) и исполнителям.
+- **Мгновенный экспорт**: Выгрузка данных в Excel/CSV для глубокого анализа или отчетности.
 
 ---
 
-## ⚙️ Уникальная архитектура БД
+## ⚙️ Синхронизация (Hybrid DB)
 
-Проект реализует продвинутую систему синхронизации данных, позволяющую работать в трех режимах:
-
-1.  **Local**: Работа только с локальной базой (SQLite). Идеально для оффлайн-разработки.
-2.  **Remote**: Прямая работа с серверной базой (PostgreSQL).
-3.  **Hybrid**: Комбинированный режим. Данные пишутся в локальную БД для максимальной скорости отклика, а фоновая синхронизация обновляет серверную БД каждые 5 минут.
-
-*Управление режимами осуществляется через переменную `APP_DB_MODE` в файле `.env`.*
+Уникальная архитектура позволяет системе работать быстро и надежно в любых условиях:
+- **Local (SQLite)**: Максимальная скорость и оффлайн-доступ.
+- **Remote (PostgreSQL)**: Централизованное хранение данных.
+- **Hybrid**: Работа на локальной базе с фоновой синхронизацией на сервер каждые 5 минут.
 
 ---
 
 ## 🚀 Быстрый старт
 
-### Требования
-- PHP 8.3+
-- Composer
-- Node.js & NPM
-- SQLite / PostgreSQL
+```bash
+# Установка зависимостей
+composer install && npm install
 
-### Установка
+# Настройка окружения
+cp .env.example .env && php artisan key:generate
 
-1. **Клонируйте репозиторий:**
-   ```bash
-   git clone https://github.com/your-repo/freelance-crm.git
-   cd freelance-crm
-   ```
-
-2. **Установите зависимости:**
-   ```bash
-   composer install
-   npm install
-   ```
-
-3. **Настройте окружение:**
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-4. **Запустите миграции и сидеры:**
-   ```bash
-   php artisan migrate --seed
-   ```
-
-5. **Запустите проект:**
-   ```bash
-   npm run dev
-   # в другом терминале
-   php artisan serve
-   ```
+# Миграции и запуск
+php artisan migrate --seed
+php artisan serve
+```
 
 ---
 
-## ☁️ Деплой (Render)
+## 💻 Стек технологий
 
-Проект полностью оптимизирован для развертывания на платформе **Render**.
-
-- Конфигурация описана в `render.yaml`.
-- Автоматически настраивается persistent disk для SQLite.
-- Поддерживается автоматическое выполнение расписания (Schedule) для гибридного режима.
-
----
-
-## 🛠 Стек технологий
-
-- **Backend**: Laravel 11+, Filament V3 (TALL Stack)
-- **Frontend**: Blade, Tailwind CSS 4, Vite 8
-- **Database**: SQLite (Local), PostgreSQL (Production)
-- **Integrations**: Telegram Bot API, Maatwebsite Excel
+- **Core**: Laravel 13.8 (PHP 8.3)
+- **UI/UX**: Filament v3, Tailwind CSS v4, Vite 8
+- **DB**: SQLite / PostgreSQL
+- **Deploy**: Полная поддержка Render (конфиг `render.yaml` включен)
 
 ---
 
 ## 📄 Лицензия
-
-Этот проект является открытым программным обеспечением, распространяемым по лицензии [MIT](LICENSE).
+MIT. Сделано для эффективного фриланса.
