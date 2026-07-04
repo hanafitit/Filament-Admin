@@ -48,12 +48,18 @@ class SourceResource extends Resource
                     })
                     ->maxLength(255)
                     ->label('Название'),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Заполняется автоматически. Менять нужно только если нужен особый внутренний код.')
-                    ->label('Системный код'),
+                Forms\Components\Section::make('Дополнительные настройки')
+                    ->description('Обычно это поле трогать не нужно.')
+                    ->collapsible()
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->helperText('Заполняется автоматически. Менять нужно только если нужен особый внутренний код.')
+                            ->label('Системный код'),
+                    ]),
             ]);
     }
 
