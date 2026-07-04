@@ -1,61 +1,114 @@
-# Freelance CRM
+# Freelance CRM 🚀
 
-## Режимы БД
+[![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
+[![Filament](https://img.shields.io/badge/Filament-FFA116?style=for-the-badge&logo=laravel&logoColor=white)](https://filamentphp.com)
+[![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
-Проект поддерживает три режима, которые переключаются через `.env` до запуска приложения:
+**Freelance CRM** — это мощная и гибкая система для управления заказами, разработанная специально для фрилансеров и небольших команд. Система позволяет автоматизировать учет доходов, контролировать дедлайны и анализировать финансовую эффективность работы на различных площадках.
 
-```env
-APP_DB_MODE=local
-DB_LOCAL_CONNECTION=sqlite
-DB_REMOTE_CONNECTION=pgsql_remote
-```
+![Dashboard Preview](https://placehold.co/1200x600/2a2a2a/white?text=Freelance+CRM+Dashboard)
 
-- `local`:
-  приложение полностью работает на локальной БД.
-- `remote`:
-  приложение полностью работает на серверной БД.
-- `hybrid`:
-  приложение работает на локальной БД, а синхронизация в серверную уходит каждые 5 минут.
+---
 
-Во всех режимах выбор активной БД делается автоматически через `App\Support\Database\DatabaseModeManager`.
+## 🌟 Ключевые возможности
 
-## Первичная копия локальной БД в серверную
+### 📦 Управление заказами
+![Kanban Board](https://placehold.co/800x400/2a2a2a/white?text=Kanban+Board+View)
+- **Kanban-доска**: Наглядное управление этапами работы над заказами.
+- **Интеграция с биржами**: Поддержка популярных площадок (Kwork, FL.ru и др.).
+- **Автоматический расчет комиссий**: Система сама вычисляет чистую прибыль, учитывая прогрессивные комиссии бирж.
+- **Вложения и комментарии**: Храните все файлы и переписку по заказу в одном месте.
 
-Перед началом работы в `hybrid` режиме сначала скопируйте локальную БД в серверную:
+### 📊 Аналитика и отчетность
+![Financial Reports](https://placehold.co/800x400/2a2a2a/white?text=Financial+Analytics+Report)
+- **Финансовый отчет**: Детальная статистика по выручке, комиссиям и чистой прибыли.
+- **Фильтрация**: Анализируйте данные за любые периоды, в разрезе менеджеров или источников трафика.
+- **Экспорт данных**: Выгрузка отчетов в форматы Excel (.xlsx) и CSV для дальнейшей обработки.
 
-```bash
-php artisan app:sync-remote-database --force
-```
+### 🤖 Автоматизация и уведомления
+- **Telegram Bot**: Мгновенные уведомления о новых событиях и изменениях статусов.
+- **Контроль дедлайнов**: Система напомнит о приближающихся сроках сдачи и оплаты.
 
-Команда:
+### 🔐 Безопасность
+- **Ролевая модель (RBAC)**: Гибкая настройка прав доступа для администраторов и менеджеров через Filament Shield.
+- **Резервное копирование**: Автоматическое создание бэкапов базы данных и файлов.
 
-- делает `upsert` по основным таблицам приложения;
-- удаляет на серверной БД записи, которых больше нет в локальной;
-- выравнивает PostgreSQL sequence после копирования.
+---
 
-Если нужно только долить данные без удаления лишних строк на сервере:
+## ⚙️ Уникальная архитектура БД
 
-```bash
-php artisan app:sync-remote-database --force --keep-extra
-```
+Проект реализует продвинутую систему синхронизации данных, позволяющую работать в трех режимах:
 
-## Render
+1.  **Local**: Работа только с локальной базой (SQLite). Идеально для оффлайн-разработки.
+2.  **Remote**: Прямая работа с серверной базой (PostgreSQL).
+3.  **Hybrid**: Комбинированный режим. Данные пишутся в локальную БД для максимальной скорости отклика, а фоновая синхронизация обновляет серверную БД каждые 5 минут.
 
-Для Render добавлен [render.yaml](/C:/Users/Байсангур/Новая%20папка/render.yaml), рассчитанный на гибридный режим:
+*Управление режимами осуществляется через переменную `APP_DB_MODE` в файле `.env`.*
 
-- локальная SQLite хранится на persistent disk в `/var/data/database.sqlite`;
-- web-сервис поднимает Laravel, `queue:work` и `schedule:work` в одном контейнере;
-- расписание Laravel запускает синхронизацию серверной БД каждые 5 минут.
+---
 
-Минимальные переменные, которые нужно заполнить на Render:
+## 🚀 Быстрый старт
 
-- `APP_KEY`
-- `APP_URL`
-- `REMOTE_DB_HOST`
-- `REMOTE_DB_PORT`
-- `REMOTE_DB_DATABASE`
-- `REMOTE_DB_USERNAME`
-- `REMOTE_DB_PASSWORD`
-- `REMOTE_DB_SSLMODE`
+### Требования
+- PHP 8.3+
+- Composer
+- Node.js & NPM
+- SQLite / PostgreSQL
 
-Если нужен строгий интервал синхронизации без пауз, лучше не использовать sleeping/free-окружение, потому что при сне web-сервиса фоновые процессы тоже останавливаются.
+### Установка
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/your-repo/freelance-crm.git
+   cd freelance-crm
+   ```
+
+2. **Установите зависимости:**
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. **Настройте окружение:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. **Запустите миграции и сидеры:**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+5. **Запустите проект:**
+   ```bash
+   npm run dev
+   # в другом терминале
+   php artisan serve
+   ```
+
+---
+
+## ☁️ Деплой (Render)
+
+Проект полностью оптимизирован для развертывания на платформе **Render**.
+
+- Конфигурация описана в `render.yaml`.
+- Автоматически настраивается persistent disk для SQLite.
+- Поддерживается автоматическое выполнение расписания (Schedule) для гибридного режима.
+
+---
+
+## 🛠 Стек технологий
+
+- **Backend**: Laravel 11+, Filament V3 (TALL Stack)
+- **Frontend**: Blade, Tailwind CSS 4, Vite 8
+- **Database**: SQLite (Local), PostgreSQL (Production)
+- **Integrations**: Telegram Bot API, Maatwebsite Excel
+
+---
+
+## 📄 Лицензия
+
+Этот проект является открытым программным обеспечением, распространяемым по лицензии [MIT](LICENSE).
