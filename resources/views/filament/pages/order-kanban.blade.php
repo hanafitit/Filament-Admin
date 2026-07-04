@@ -119,7 +119,7 @@
                                 wire:key="kanban-order-{{ $order['id'] }}"
                                 class="min-w-0 cursor-move rounded-xl border border-gray-200 bg-gray-50 p-3 shadow-sm transition hover:border-primary-300 hover:shadow-md dark:border-white/10 dark:bg-white/5"
                                 draggable="true"
-                                x-show="pendingOrderId !== {{ $order['id'] }}"
+                                x-bind:class="(draggingOrderId === {{ $order['id'] }} || pendingOrderId === {{ $order['id'] }}) ? 'pointer-events-none invisible' : ''"
                                 x-on:dragstart="
                                     draggingOrderId = {{ $order['id'] }};
                                     event.dataTransfer.effectAllowed = 'move';
