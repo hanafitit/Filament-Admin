@@ -28,8 +28,7 @@
 
 1.  **Клонируйте репозиторий:**
     ```bash
-    git clone https://github.com/your-repo/project.git
-    cd project
+    git clone https://github.com/hanafitit/Filament-Admin.git
     ```
 
 2.  **Запустите скрипт автоматической настройки:**
