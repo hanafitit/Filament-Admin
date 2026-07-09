@@ -76,7 +76,6 @@
         box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
     }
 
-    .fi-sidebar,
     .fi-topbar,
     .fi-ta-ctn,
     .fi-section,
@@ -87,6 +86,32 @@
     .fi-theme-panel {
         position: relative;
         z-index: 1;
+    }
+
+    @media (min-width: 1024px) {
+        .fi-sidebar {
+            position: relative;
+            z-index: 1;
+        }
+    }
+
+    @media (max-width: 1023px) {
+        .fi-sidebar {
+            position: fixed !important;
+            z-index: 40 !important;
+            border-radius: 0 1.5rem 1.5rem 0 !important;
+        }
+    }
+
+    .fi-sidebar,
+    .fi-topbar,
+    .fi-ta-ctn,
+    .fi-section,
+    .fi-wi-stats-overview-stat,
+    .fi-fo-field-wrp,
+    .fi-modal-window,
+    .fi-dropdown-panel,
+    .fi-theme-panel {
         backdrop-filter: blur(18px);
         border-radius: 1.5rem;
         transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
