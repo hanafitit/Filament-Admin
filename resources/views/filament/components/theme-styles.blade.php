@@ -1,4 +1,35 @@
+<script>
+    (function() {
+        document.documentElement.classList.add('no-transitions');
+        window.addEventListener('DOMContentLoaded', function() {
+            requestAnimationFrame(function() {
+                document.documentElement.classList.remove('no-transitions');
+            });
+        });
+    })();
+</script>
+
 <style>
+    html {
+        background-color: #fffdf6;
+    }
+
+    html.dark {
+        background-color: #09090b;
+    }
+
+    .no-transitions,
+    .no-transitions *,
+    .no-transitions *::before,
+    .no-transitions *::after {
+        -webkit-transition: none !important;
+        -moz-transition: none !important;
+        -o-transition: none !important;
+        -ms-transition: none !important;
+        transition: none !important;
+        animation: none !important;
+    }
+
     :root {
         --theme-shell-light: radial-gradient(circle at top, rgba(251, 191, 36, 0.18), transparent 34%), linear-gradient(180deg, #fffdf6 0%, #f3efe4 100%);
         --theme-shell-dark: radial-gradient(circle at top, rgba(251, 191, 36, 0.14), transparent 28%), linear-gradient(180deg, #14110f 0%, #09090b 100%);
@@ -76,7 +107,6 @@
         box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
     }
 
-    .fi-sidebar,
     .fi-topbar,
     .fi-ta-ctn,
     .fi-section,
@@ -87,6 +117,32 @@
     .fi-theme-panel {
         position: relative;
         z-index: 1;
+    }
+
+    @media (min-width: 1024px) {
+        .fi-sidebar {
+            position: relative;
+            z-index: 1;
+        }
+    }
+
+    @media (max-width: 1023px) {
+        .fi-sidebar {
+            position: fixed !important;
+            z-index: 40 !important;
+            border-radius: 0 1.5rem 1.5rem 0 !important;
+        }
+    }
+
+    .fi-sidebar,
+    .fi-topbar,
+    .fi-ta-ctn,
+    .fi-section,
+    .fi-wi-stats-overview-stat,
+    .fi-fo-field-wrp,
+    .fi-modal-window,
+    .fi-dropdown-panel,
+    .fi-theme-panel {
         backdrop-filter: blur(18px);
         border-radius: 1.5rem;
         transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background-color 180ms ease;
