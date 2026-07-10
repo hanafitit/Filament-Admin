@@ -88,6 +88,7 @@ class DatabaseSyncService
 
             if ($updateColumns === []) {
                 $query->insertOrIgnore($chunk->all());
+
                 continue;
             }
 

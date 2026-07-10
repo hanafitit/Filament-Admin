@@ -1,0 +1,163 @@
+/* resources/css/theme.css */
+
+:root {
+    /* Global Glassmorphism Tokens */
+    --glass-blur: 14px;
+    --transition-time: 180ms;
+    --transition-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Light Theme Glass Variables */
+    --glass-bg-light: rgba(255, 255, 255, 0.65);
+    --glass-border-light: rgba(251, 191, 36, 0.16);
+    --shadow-glass-light: 0 12px 30px rgba(148, 123, 77, 0.06), 0 2px 4px rgba(148, 123, 77, 0.02);
+    --shadow-hover-light: 0 18px 40px rgba(148, 123, 77, 0.12), 0 4px 10px rgba(148, 123, 77, 0.03);
+
+    /* Dark Theme Glass Variables */
+    --glass-bg-dark: rgba(20, 20, 22, 0.62);
+    --glass-border-dark: rgba(251, 191, 36, 0.12);
+    --shadow-glass-dark: 0 16px 36px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.16);
+    --shadow-hover-dark: 0 24px 50px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.24);
+
+    /* Profitability Colors */
+    --profit-low: #ef4444;       /* Red */
+    --profit-medium: #f59e0b;    /* Amber */
+    --profit-high: #10b981;      /* Emerald */
+}
+
+/* Base Transition System */
+.fi-btn,
+.fi-icon-btn,
+.fi-badge,
+.fi-input,
+.fi-select-input,
+.fi-ta-record,
+.fi-dropdown-list-item,
+.fi-theme-card,
+.fi-wi-stats-overview-stat,
+.fi-section,
+.fi-ta-ctn {
+    transition: transform var(--transition-time) var(--transition-ease),
+                box-shadow var(--transition-time) var(--transition-ease),
+                background-color var(--transition-time) var(--transition-ease),
+                border-color var(--transition-time) var(--transition-ease),
+                color var(--transition-time) var(--transition-ease),
+                opacity var(--transition-time) var(--transition-ease) !important;
+}
+
+/* Glassmorphic Cards & Panels with High Readability */
+html:not(.dark) .fi-theme-glass-card {
+    background: var(--glass-bg-light) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    border: 1px solid var(--glass-border-light) !important;
+    box-shadow: var(--shadow-glass-light) !important;
+}
+
+html.dark .fi-theme-glass-card {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    border: 1px solid var(--glass-border-dark) !important;
+    box-shadow: var(--shadow-glass-dark) !important;
+}
+
+/* Tactile States - Desktop (with Scale & Lift & Subtle Border Glow) */
+@media (hover: hover) {
+    .fi-theme-glass-card:hover {
+        transform: translateY(-3px) scale(1.015) !important;
+        will-change: transform;
+    }
+
+    html:not(.dark) .fi-theme-glass-card:hover {
+        box-shadow: var(--shadow-hover-light) !important;
+        border-color: rgba(245, 158, 11, 0.28) !important;
+    }
+
+    html.dark .fi-theme-glass-card:hover {
+        box-shadow: var(--shadow-hover-dark) !important;
+        border-color: rgba(251, 191, 36, 0.22) !important;
+    }
+}
+
+/* Tactile States - Mobile/Touch (Strictly No Scale/Zoom, Only Lift & Shadow to prevent scroll stutter) */
+@media (hover: none) {
+    .fi-theme-glass-card:hover {
+        transform: translateY(-2px) !important;
+    }
+
+    html:not(.dark) .fi-theme-glass-card:hover {
+        box-shadow: var(--shadow-hover-light) !important;
+    }
+
+    html.dark .fi-theme-glass-card:hover {
+        box-shadow: var(--shadow-hover-dark) !important;
+    }
+}
+
+/* Tactile Press (Active) State for Both Mobile and Desktop */
+.fi-theme-glass-card:active {
+    transform: translateY(1px) scale(0.985) !important;
+}
+
+/* Standardized Transition Speed for Non-Glass Cards */
+.fi-theme-card:active {
+    transform: translateY(1px) scale(0.985) !important;
+}
+
+/* Kanban Drag & Drop Styles */
+.kanban-drop-placeholder {
+    min-height: 7.5rem;
+    border: 2px dashed rgba(251, 191, 36, 0.35) !important;
+    border-radius: 1.35rem !important;
+    background: rgba(251, 191, 36, 0.03) !important;
+    box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(251, 191, 36, 0.04) !important;
+    transition: all var(--transition-time) var(--transition-ease) !important;
+    animation: placeholderFadeIn var(--transition-time) var(--transition-ease) both;
+}
+
+@keyframes placeholderFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Heartbeat Pulse Animation for Active Status Dots */
+.status-pulse-glow {
+    animation: statusGlowPulse 2.4s infinite ease-in-out;
+    will-change: transform, box-shadow;
+}
+
+@keyframes statusGlowPulse {
+    0%, 100% {
+        box-shadow: 0 0 4px currentColor, 0 0 10px rgba(251, 191, 36, 0.15);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 12px currentColor, 0 0 20px rgba(251, 191, 36, 0.4);
+        transform: scale(1.15);
+    }
+}
+
+/* Profitability indicator bar stylings */
+.profitability-bar-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(226, 232, 240, 0.2);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 0.35rem;
+}
+
+html.dark .profitability-bar-container {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.profitability-bar {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s ease;
+}

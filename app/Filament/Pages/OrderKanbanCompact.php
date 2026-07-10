@@ -153,13 +153,18 @@ class OrderKanbanCompact extends Page
     protected function formatOrderCard(Order $order): array
     {
         $metaLines = [];
+        $canSeeBudget = $this->canSeeBudget();
 
-        if ($this->canSeeBudget()) {
+        if ($canSeeBudget) {
             $budget = number_format((float) $order->budget, 2, '.', ' ');
             $metaLines[] = "Бюджет: {$budget} ₽";
         }
 
         $metaLines[] = 'Дедлайн: '.$order->deadline?->format('d.m');
+
+        $budgetVal = (float) $order->budget;
+        $netIncomeVal = (float) $order->net_income;
+        $profitability = $budgetVal > 0 ? (($netIncomeVal / $budgetVal) * 100) : 100.0;
 
         return [
             'id' => $order->id,
@@ -168,6 +173,11 @@ class OrderKanbanCompact extends Page
             'meta_lines' => $metaLines,
             'edit_url' => route('filament.admin.resources.orders.edit', ['record' => $order]),
             'can_delete' => $this->canDeleteOrders(),
+            'can_see_budget' => $canSeeBudget,
+            'budget' => $budgetVal,
+            'commission' => (float) $order->commission,
+            'net_income' => $netIncomeVal,
+            'profitability' => $profitability,
         ];
     }
 }

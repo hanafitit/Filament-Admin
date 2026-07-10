@@ -74,13 +74,17 @@
                 };
             @endphp
 
+            @php
+                $isPulseStatus = in_array($column['color'], ['warning', 'info', 'primary']);
+                $pulseClass = $isPulseStatus ? 'status-pulse-glow' : '';
+            @endphp
             <details
                 wire:key="compact-kanban-column-{{ $column['id'] }}"
-                class="fi-theme-surface fi-theme-card fi-theme-delay-{{ ($loop->index % 4) + 1 }} group overflow-hidden"
+                class="fi-theme-surface fi-theme-glass-card fi-theme-delay-{{ ($loop->index % 4) + 1 }} group overflow-hidden"
             >
                 <summary class="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 marker:hidden">
                     <div class="flex items-center gap-3">
-                        <span class="{{ $dotClass }} inline-flex h-3 w-3 rounded-full shadow-[0_0_18px_currentColor]"></span>
+                        <span class="{{ $dotClass }} {{ $pulseClass }} inline-flex h-3 w-3 rounded-full shadow-[0_0_18px_currentColor]"></span>
 
                         <div>
                             <h2 class="text-sm font-semibold text-gray-950 dark:text-white">
@@ -111,11 +115,11 @@
                         @forelse ($column['orders'] as $order)
                             <article
                                 wire:key="compact-kanban-order-{{ $order['id'] }}"
-                                class="fi-theme-card border border-white/10 p-4"
+                                class="fi-theme-glass-card border border-white/10 p-4"
                             >
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="min-w-0 flex-1 space-y-2">
-                                        <div class="rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
+                                        <div class="rounded-lg bg-white/35 px-2.5 py-1.5 dark:bg-white/5">
                                             <h3 class="kanban-text-wrap text-sm font-semibold text-gray-950 dark:text-white">
                                                 {{ $order['title'] }}
                                             </h3>
@@ -123,7 +127,7 @@
 
                                         <div class="space-y-0.5 text-xs leading-5 text-gray-600 dark:text-gray-300">
                                             @foreach ($order['meta_lines'] as $line)
-                                                <p class="kanban-text-wrap rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
+                                                <p class="kanban-text-wrap rounded-lg bg-white/35 px-2.5 py-1.5 dark:bg-white/5">
                                                     {{ $line }}
                                                 </p>
                                             @endforeach
@@ -166,6 +170,28 @@
                                         @endif
                                     </div>
                                 </div>
+
+                                @if ($order['can_see_budget'])
+                                    @php
+                                        $pct = min(100, max(0, $order['profitability']));
+                                        if ($pct <= 30) {
+                                            $barColor = 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]';
+                                        } elseif ($pct <= 60) {
+                                            $barColor = 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]';
+                                        } else {
+                                            $barColor = 'bg-success-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]';
+                                        }
+                                    @endphp
+                                    <div class="mt-3 space-y-1">
+                                        <div class="flex justify-between text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            <span>Рентабельность</span>
+                                            <span>{{ round($order['profitability']) }}%</span>
+                                        </div>
+                                        <div class="profitability-bar-container">
+                                            <div class="profitability-bar {{ $barColor }}" style="width: {{ $pct }}%"></div>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <div class="mt-4 flex items-center justify-between gap-3">
                                     <label class="text-xs font-medium text-gray-500 dark:text-gray-400">
