@@ -11,7 +11,7 @@ class OrdersChart extends Widget
 {
     protected static string $view = 'filament.widgets.orders-chart';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function getData(): array
     {

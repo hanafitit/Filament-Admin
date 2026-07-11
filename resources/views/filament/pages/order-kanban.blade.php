@@ -69,7 +69,7 @@
                         return;
                     }
 
-                    this.dragSourceElement.classList.add('opacity-0');
+                    this.dragSourceElement.classList.add('opacity-35');
                 });
             },
             restoreDragSource() {
@@ -77,7 +77,7 @@
                     return;
                 }
 
-                this.dragSourceElement.classList.remove('opacity-0');
+                this.dragSourceElement.classList.remove('opacity-35');
                 this.dragSourceElement = null;
                 this.dragPlaceholderHeight = null;
                 this.hoverStatusId = null;
@@ -222,6 +222,10 @@
                     "
                     x-on:dragleave="if (! $el.contains($event.relatedTarget) && hoverStatusId === {{ $column['id'] }}) hoverStatusId = null"
                 >
+                    @php
+                        $isPulseStatus = in_array($column['color'], ['warning', 'info', 'primary']);
+                        $pulseClass = $isPulseStatus ? 'status-pulse-glow' : '';
+                    @endphp
                     <div class="mb-4 flex items-center justify-between gap-2">
                         <div class="min-w-0 space-y-1">
                             <div lang="ru" class="fi-theme-pill mb-2 w-fit px-3 py-1.5 text-sm font-semibold">
@@ -233,14 +237,14 @@
                             </p>
                         </div>
 
-                        <span class="{{ $dotClass }} inline-flex h-3 w-3 rounded-full shadow-[0_0_20px_currentColor]"></span>
+                        <span class="{{ $dotClass }} {{ $pulseClass }} inline-flex h-3 w-3 rounded-full shadow-[0_0_20px_currentColor]"></span>
                     </div>
 
                     <div class="space-y-2.5">
                         @forelse ($column['orders'] as $order)
                             <article
                                 wire:key="kanban-order-{{ $order['id'] }}"
-                                class="fi-theme-card min-h-[7.5rem] min-w-0 cursor-move border border-white/10 p-3.5"
+                                class="fi-theme-glass-card min-h-[7.5rem] min-w-0 cursor-move border border-white/10 p-3.5"
                                 data-kanban-card
                                 data-order-id="{{ $order['id'] }}"
                                 draggable="true"
@@ -267,7 +271,7 @@
                             >
                                 <div class="flex h-full flex-col gap-2">
                                     <div class="flex items-start justify-between gap-2">
-                                        <div class="min-w-0 flex-1 rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
+                                        <div class="min-w-0 flex-1 rounded-lg bg-white/35 px-2.5 py-1.5 dark:bg-white/5">
                                             <h3 lang="ru" class="kanban-text-wrap text-sm font-semibold leading-snug text-gray-950 dark:text-white">
                                                 {{ $order['title'] }}
                                             </h3>
@@ -299,11 +303,33 @@
 
                                     <div class="space-y-1 text-xs leading-5 text-gray-600 dark:text-gray-300">
                                         @foreach ($order['meta_lines'] as $line)
-                                            <p lang="ru" class="kanban-text-wrap rounded-lg bg-white/45 px-2.5 py-1.5 dark:bg-white/5">
+                                            <p lang="ru" class="kanban-text-wrap rounded-lg bg-white/35 px-2.5 py-1.5 dark:bg-white/5">
                                                 {{ $line }}
                                             </p>
                                         @endforeach
                                     </div>
+
+                                    @if ($order['can_see_budget'])
+                                        @php
+                                            $pct = min(100, max(0, $order['profitability']));
+                                            if ($pct <= 30) {
+                                                $barColor = 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]';
+                                            } elseif ($pct <= 60) {
+                                                $barColor = 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]';
+                                            } else {
+                                                $barColor = 'bg-success-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]';
+                                            }
+                                        @endphp
+                                        <div class="mt-2 space-y-1">
+                                            <div class="flex justify-between text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                <span>Рентабельность</span>
+                                                <span>{{ round($order['profitability']) }}%</span>
+                                            </div>
+                                            <div class="profitability-bar-container">
+                                                <div class="profitability-bar {{ $barColor }}" style="width: {{ $pct }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                             </article>
                         @empty

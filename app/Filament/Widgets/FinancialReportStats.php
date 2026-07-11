@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class FinancialReportStats extends StatsOverviewWidget
 {
+    protected static string $view = 'filament.widgets.financial-report-stats';
+
     public array $report = [];
 
     public function mount(ReportService $reportService): void

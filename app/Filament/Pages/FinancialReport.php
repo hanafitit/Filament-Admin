@@ -96,6 +96,7 @@ class FinancialReport extends Page implements HasForms
     {
         return number_format((float) $amount, 2, ',', ' ').' ₽';
     }
+
     public function getOrdersPageUrl(): string
     {
         return route('filament.admin.resources.orders.index');
