@@ -73,7 +73,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @return array<int, string>
      */
-    protected function testDatabaseTables(): array
+    protected function test_database_tables(): array
     {
         return collect(DB::select(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' AND name != 'migrations'"
