@@ -55,7 +55,6 @@
     html:not(.dark) .fi-ta-ctn,
     html:not(.dark) .fi-section,
     html:not(.dark) .fi-wi-stats-overview-stat,
-    html:not(.dark) .fi-fo-field-wrp,
     html:not(.dark) .fi-modal-window,
     html:not(.dark) .fi-dropdown-panel,
     html:not(.dark) .fi-theme-panel {
@@ -68,7 +67,6 @@
     html.dark .fi-ta-ctn,
     html.dark .fi-section,
     html.dark .fi-wi-stats-overview-stat,
-    html.dark .fi-fo-field-wrp,
     html.dark .fi-modal-window,
     html.dark .fi-dropdown-panel,
     html.dark .fi-theme-panel {
@@ -80,7 +78,6 @@
     .fi-ta-ctn,
     .fi-section,
     .fi-wi-stats-overview-stat,
-    .fi-fo-field-wrp,
     .fi-modal-window,
     .fi-dropdown-panel,
     .fi-theme-panel {
@@ -108,7 +105,6 @@
     .fi-ta-ctn,
     .fi-section,
     .fi-wi-stats-overview-stat,
-    .fi-fo-field-wrp,
     .fi-modal-window,
     .fi-dropdown-panel,
     .fi-theme-panel {
