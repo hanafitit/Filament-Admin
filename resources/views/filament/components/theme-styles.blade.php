@@ -74,6 +74,31 @@
         box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
     }
 
+    html:not(.dark) .fi-simple-main {
+        background: rgba(255, 255, 255, 0.96) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--theme-border-light) !important;
+        box-shadow: 0 20px 50px rgba(148, 123, 77, 0.12) !important;
+        border-radius: 1.5rem !important;
+    }
+
+    html.dark .fi-simple-main {
+        background: rgba(30, 30, 35, 0.92) !important;
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--theme-border-dark) !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5) !important;
+        border-radius: 1.5rem !important;
+        color: #f8fafc;
+    }
+
+    html.dark .fi-simple-main h1,
+    html.dark .fi-simple-main h2,
+    html.dark .fi-simple-main label,
+    html.dark .fi-simple-main span,
+    html.dark .fi-simple-main p {
+        color: #f8fafc;
+    }
+
     .fi-topbar,
     .fi-ta-ctn,
     .fi-section,
